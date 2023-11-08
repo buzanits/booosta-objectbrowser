@@ -12,7 +12,7 @@ class Objectbrowser extends \booosta\base\Module
   protected $used_objects = [];
 
   
-  public function __construct(protected Object $obj) {}
+  public function __construct(protected $obj) {}
 
   public function get($path = '', $obj = null)
   {
