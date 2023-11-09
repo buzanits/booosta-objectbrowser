@@ -10,9 +10,15 @@ class Objectbrowser extends \booosta\base\Module
   use moduletrait_objectbrowser;
 
   protected $used_objects = [];
+  protected $editlink, $arrayeditlink, $objecteditlink, $linkseperator = '-';
 
   
   public function __construct(protected $obj) {}
+
+  public function editlink($link)  { $this->editlink = $link; }
+  public function arrayeditlink($link)  { $this->arrayeditlink = $link; }
+  public function objecteditlink($link)  { $this->objecteditlink = $link; }
+  public function linkseperator($seperator)  { $this->linkseperator = $seperator; }
 
   public function get($path = '', $obj = null)
   {
@@ -47,7 +53,7 @@ class Objectbrowser extends \booosta\base\Module
     endif;
   }
 
-  public function get_html($obj = null)
+  public function get_html($obj = null, $linkid = '')
   {
     #b::debug($obj);
     if($obj === null) $obj = $this->obj;
@@ -66,7 +72,11 @@ class Objectbrowser extends \booosta\base\Module
           $tr = "<tr class='objectbrowser_tr'>";
         endif;
 
-        $data_html = $this->get_html($data ?? '');
+        $linkids = $linkid !== '' ? explode($this->linkseperator, $linkid) : [];
+        $linkids[] = $idx;
+        $newlinkid = implode($this->linkseperator, $linkids);
+
+        $data_html = $this->get_html($data ?? '', $newlinkid);
         $html .= "$tr<td class='objectbrowser_td'>$idx</td><td class='objectbrowser_td'>$data_html</td></tr>";
       endforeach;
 
@@ -87,8 +97,12 @@ class Objectbrowser extends \booosta\base\Module
 
       $size = max(sizeof($vars), 1);
 
+      $editlink = $this->objecteditlink ?? $this->editlink;
+      if($editlink) $link = '<br>{LINK|edit|' . str_replace('{id}', $linkid, $editlink) . '}';
+      else $link = '';
+
       $html = "<table class='objectbrowser_table'><tr class='objectbrowser_tr'>
-               <td class='objectbrowser_td' rowspan='$size'><b>Object</b><br>($class)</td>";
+               <td class='objectbrowser_td' rowspan='$size'><b>Object</b><br>($class)$link</td>";
       $first = true;
 
       foreach($vars as $idx => $data):
@@ -99,7 +113,7 @@ class Objectbrowser extends \booosta\base\Module
           $tr = "<tr class='objectbrowser_tr'>";
         endif;
 
-        $data_html = $this->get_html($data ?? '');
+        $data_html = $this->get_html($data ?? '', $linkid);
         $html .= "$tr<td class='objectbrowser_td'>$idx</td><td class='objectbrowser_td'>$data_html</td></tr>";
       endforeach;
   
