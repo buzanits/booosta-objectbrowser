@@ -98,7 +98,7 @@ class Objectbrowser extends \booosta\base\Module
       $size = max(sizeof($vars), 1);
 
       $editlink = $this->objecteditlink ?? $this->editlink;
-      if($editlink) $link = '<br>{LINK|edit|' . str_replace('{id}', $linkid, $editlink) . '}';
+      if($editlink) $link = '<br><a href="' . str_replace('{id}', $linkid, $editlink) . '">edit</a>';
       else $link = '';
 
       $html = "<table class='objectbrowser_table'><tr class='objectbrowser_tr'>
